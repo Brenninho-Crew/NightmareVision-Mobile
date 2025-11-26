@@ -2,6 +2,7 @@ import funkin.objects.BGSprite;
 import funkin.states.substates.GameOverSubstate;
 import funkin.objects.stageobjects.TankmenBG;
 import funkin.data.Chart;
+import funkin.objects.Bopper;
 
 import flixel.util.FlxSort;
 
@@ -256,12 +257,12 @@ function tankIntro()
 	switch (songName)
 	{
 		case 'ugh':
-			var tankman = new AnimateSprite(415, 565, Paths.textureAtlas('cutscenes/Ugh'));
-			tankman.anim.addBySymbol('Well', 'TANK TALK 1 P1', 0, 0, 24);
-			tankman.anim.addBySymbol('Kill', 'TANK TALK 1 P2', 0, 0, 24);
+			var tankman = new Bopper(415, 565, Paths.textureAtlas('cutscenes/Ugh'));
+			tankman.addAnimByPrefix('Well', 'TANK TALK 1 P1', 0, 0, 24);
+			tankman.addAnimByPrefix('Kill', 'TANK TALK 1 P2', 0, 0, 24);
 			tankman.antialiasing = true;
 			add(tankman);
-			tankman.anim.play('Well');
+			tankman.playAnim('Well');
 			// tankman.anim.pause();
 			
 			// FlxG.sound.play(Paths.music('DISTORTO'));
@@ -286,7 +287,7 @@ function tankIntro()
 				camFollow.x -= 550;
 				camFollow.y -= 50;
 				
-				tankman.anim.play('Kill');
+				tankman.playAnim('Kill');
 				FlxG.sound.play(Paths.sound('killYou'));
 			});
 			
@@ -296,12 +297,12 @@ function tankIntro()
 				endScene();
 			});
 		case 'guns':
-			var tankman = new AnimateSprite(415, 565, Paths.textureAtlas('cutscenes/Guns'));
-			tankman.anim.addBySymbol('tight', 'TANK TALK 2', 0, 0, 24);
+			var tankman = new Bopper(415, 565, Paths.textureAtlas('cutscenes/Guns'));
+			tankman.addAnimByPrefix('tight', 'TANK TALK 2', 0, 0, 24);
 			tankman.antialiasing = true;
 			add(tankman);
 			
-			tankman.anim.play('tight');
+			tankman.play('tight');
 			FlxG.sound.play(Paths.sound('tankSong2'));
 			FunkinSound.playMusic(Paths.music('DISTORTO'));
 			
@@ -325,9 +326,9 @@ function tankIntro()
 			gfGroup.alpha = 0.00001;
 			boyfriendGroup.alpha = 0.00001;
 			
-			var tankman = new AnimateSprite(415, 565, Paths.textureAtlas('cutscenes/Stress'));
-			tankman.anim.addBySymbol('FUCK', 'TANK TALK 3 P1 UNCUT', 0, 0, 24);
-			tankman.anim.addBySymbol('pico', 'TANK TALK 3 P2 UNCUT', 0, 0, 24);
+			var tankman = new Bopper(415, 565, Paths.textureAtlas('cutscenes/Stress'));
+			tankman.addAnimByPrefix('FUCK', 'TANK TALK 3 P1 UNCUT', 0, 0, 24);
+			tankman.addAnimByPrefix('pico', 'TANK TALK 3 P2 UNCUT', 0, 0, 24);
 			tankman.antialiasing = true;
 			stage.add(tankman);
 			
@@ -351,8 +352,8 @@ function tankIntro()
 			gfCutscene.alpha = 0;
 			stage.add(gfCutscene);
 			
-			picoCutscene = new AnimateSprite(gf.x - 849, gf.y - 264, Paths.textureAtlas('cutscenes/stressPico'));
-			picoCutscene.anim.addBySymbol('anim', 'Pico Badass', 0, 0, 24);
+			picoCutscene = new Bopper(gf.x - 849, gf.y - 264, Paths.textureAtlas('cutscenes/stressPico'));
+			picoCutscene.addAnimByPrefix('anim', 'Pico Badass', 0, 0, 24);
 			picoCutscene.alpha = 0;
 			stage.add(picoCutscene);
 			
@@ -381,7 +382,7 @@ function tankIntro()
 			
 			FlxTimer.wait(0.1, () -> {
 				stressScene.play();
-				tankman.anim.play('FUCK');
+				tankman.playAnim('FUCK');
 			});
 			snapCamToPos(dad.x + 400, dad.y + 170);
 			FlxTween.tween(FlxG.camera, {zoom: 0.9 * 1.2}, 1, {ease: FlxEase.quadInOut});
@@ -402,7 +403,7 @@ function tankIntro()
 					{
 						gfCutscene.visible = false;
 						picoCutscene.alpha = 1;
-						picoCutscene.anim.play('anim');
+						picoCutscene.playAnim('anim');
 						
 						boyfriendGroup.alpha = 1;
 						boyfriendCutscene.visible = false;
@@ -426,7 +427,7 @@ function tankIntro()
 			
 			FlxTimer.wait(17.5, zoomBack);
 			FlxTimer.wait(19.5, () -> {
-				tankman.anim.play('pico', true);
+				tankman.playAnim('pico', true);
 			});
 			FlxTimer.wait(20, () -> {
 				camFollow.setPosition(dad.x + 500, dad.y + 170);
