@@ -25,9 +25,12 @@
 	<set name="BUILD_DIR" value="export/32bit" if="32bits" />
 	<set name="BUILD_DIR" value="${BUILD_DIR}-tracy" if="FEATURE_DEBUG_TRACY"/>
 
-	<define name="MODS_ALLOWED" if="desktop || mobile" /> <define name="LUA_ALLOWED" if="cpp" />
+	<define name="MODS_ALLOWED" if="desktop || mobile" />
+	<define name="LUA_ALLOWED" if="cpp" />
 	<define name="VIDEOS_ALLOWED" if="cpp" />
-	<define name="DISCORD_ALLOWED" if="desktop"/> <assets path='assets/embeds' rename='assets' embed="true" />
+	<define name="DISCORD_ALLOWED" if="desktop"/>
+
+	<assets path='assets/embeds' rename='assets' embed="true" />
 	<assets path="assets/game" rename="assets"/>
 
 	<assets path='content' embed='false' if="MODS_ALLOWED"/>
@@ -95,12 +98,16 @@
 
 	<haxedef name="no-deprecation-warnings"/>
 
+	<set name="ANDROID_SET_EXTERNAL_STORAGE_PERMISSION" value="1" />
+	
 	<config:android 
 		install-location="auto" 
 		extension=".apk" 
-		permissions="android.permission.READ_EXTERNAL_STORAGE, android.permission.WRITE_EXTERNAL_STORAGE" 
+		permissions="android.permission.READ_EXTERNAL_STORAGE, android.permission.WRITE_EXTERNAL_STORAGE, android.permission.MANAGE_EXTERNAL_STORAGE" 
 		target-sdk-version="33" />
 	
+	<haxedef name="EXTERNAL_FILES" if="android" />
+
 	<window if="android" render="opengl" />
 
 	<icon path="projFiles/icon/icon16.png" size='16'/>
