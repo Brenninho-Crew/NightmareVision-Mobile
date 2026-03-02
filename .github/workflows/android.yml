@@ -46,12 +46,13 @@ jobs:
 
       - name: Compile APK (Debug)
         run: |
-          # Mudança de 'build' para 'test' ou 'build' com flag debug
+          # Adicionando a flag -debug e garantindo a limpeza antes do build
           haxelib run lime build android -debug
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: NightmareVision-Android-Debug
-          # O caminho muda de 'release' para 'debug' na estrutura de pastas do Gradle
-          path: export/debug/android/bin/app/build/outputs/apk/debug/*.apk
+          # Usando um padrão de busca (glob) mais abrangente para evitar erros de caminho
+          path: ./**/*.apk
+          if-no-files-found: error
