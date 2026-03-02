@@ -1,4 +1,4 @@
-name: Build Android Debug
+name: Android Build
 on:
   push:
     branches: [ main ]
@@ -12,6 +12,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
@@ -35,30 +41,23 @@ jobs:
           haxelib run lime setup flixel
           haxelib run lime setup
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Android SDK/NDK
+      - name: Setup Android NDK
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: r21e
 
-      - name: Configure Lime for Android
+      - name: Configure Lime
         run: |
           haxelib run lime setup android --sdk=$ANDROID_SDK_ROOT --ndk=$ANDROID_NDK_ROOT --jdk=$JAVA_HOME
 
-      - name: Compile APK (Debug)
+      - name: Build APK
         run: |
-          # Adicionamos uma flag para ignorar erros de sintaxe antiga do Gradle se possível
-          haxelib run lime build android -debug -Dadvanced-ndk
+          # O comando 'build' cria o APK. Usamos -debug para facilitar o teste inicial.
+          haxelib run lime build android -debug
 
-      - name: Upload Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: NightmareVision-Android-Debug
-          # Esta busca vai varrer todas as pastas por qualquer APK gerado
-          path: export/debug/android/bin/app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+          name: NightmareVision-Android
+          # O asterisco duplo garante que ele ache o APK mesmo que a pasta mude
+          path: ./**/*.apk
