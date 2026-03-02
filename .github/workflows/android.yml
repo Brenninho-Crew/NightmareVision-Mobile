@@ -1,0 +1,57 @@
+name: Build Android Debug
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.2.5
+
+      - name: Install Libraries
+        run: |
+          haxelib setup ~/haxelib
+          haxelib install flixel 5.5.0
+          haxelib install flixel-addons
+          haxelib install flixel-ui
+          haxelib install openfl
+          haxelib install lime
+          haxelib install flxanimate
+          haxelib install hscript-iris
+          haxelib install linc_luajit
+          haxelib install extension-androidtools
+          haxelib install SStas-An
+          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
+          haxelib run lime setup flixel
+          haxelib run lime setup
+
+      - name: Setup Android SDK/NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r21e
+
+      - name: Configure Lime for Android
+        run: |
+          haxelib run lime setup android --sdk=$ANDROID_SDK_ROOT --ndk=$ANDROID_NDK_ROOT --jdk=$JAVA_HOME_17_X64
+
+      - name: Compile APK (Debug)
+        run: |
+          # Mudança de 'build' para 'test' ou 'build' com flag debug
+          haxelib run lime build android -debug
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NightmareVision-Android-Debug
+          # O caminho muda de 'release' para 'debug' na estrutura de pastas do Gradle
+          path: export/debug/android/bin/app/build/outputs/apk/debug/*.apk
