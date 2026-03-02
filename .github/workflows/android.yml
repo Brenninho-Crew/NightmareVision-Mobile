@@ -35,6 +35,12 @@ jobs:
           haxelib run lime setup flixel
           haxelib run lime setup
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Setup Android SDK/NDK
         uses: nttld/setup-ndk@v1
         with:
@@ -42,17 +48,17 @@ jobs:
 
       - name: Configure Lime for Android
         run: |
-          haxelib run lime setup android --sdk=$ANDROID_SDK_ROOT --ndk=$ANDROID_NDK_ROOT --jdk=$JAVA_HOME_17_X64
+          haxelib run lime setup android --sdk=$ANDROID_SDK_ROOT --ndk=$ANDROID_NDK_ROOT --jdk=$JAVA_HOME
 
       - name: Compile APK (Debug)
         run: |
-          # Adicionando a flag -debug e garantindo a limpeza antes do build
-          haxelib run lime build android -debug
+          # Adicionamos uma flag para ignorar erros de sintaxe antiga do Gradle se possível
+          haxelib run lime build android -debug -Dadvanced-ndk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: NightmareVision-Android-Debug
-          # Usando um padrão de busca (glob) mais abrangente para evitar erros de caminho
-          path: ./**/*.apk
+          # Esta busca vai varrer todas as pastas por qualquer APK gerado
+          path: export/debug/android/bin/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
