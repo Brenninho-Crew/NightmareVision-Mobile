@@ -22,7 +22,7 @@ jobs:
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.2.5
+          haxe-version: 4.3.6 # Versão estável e disponível no servidor
 
       - name: Install Libraries
         run: |
@@ -52,12 +52,12 @@ jobs:
 
       - name: Build APK
         run: |
-          # O comando 'build' cria o APK. Usamos -debug para facilitar o teste inicial.
+          # Compilando em Debug para garantir que o build termine rápido e gere o log de erro se falhar
           haxelib run lime build android -debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NightmareVision-Android
-          # O asterisco duplo garante que ele ache o APK mesmo que a pasta mude
           path: ./**/*.apk
+          if-no-files-found: error
