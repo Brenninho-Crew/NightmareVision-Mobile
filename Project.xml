@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<app title="FNF: NightmareVision" file="Friday n Fnightfunkin" packageName="com.shadowmario.nvmengine" package="com.shadowmario.nvmengine" main="Main" version="0.2.7" company="ShadowMario" />
+	<app title="FNF: NightmareVision" file="NightmareVision" packageName="com.shadowmario.nvmengine" package="com.shadowmario.nvmengine" main="Main" version="0.2.7" company="ShadowMario" />
 
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
 
@@ -53,15 +53,14 @@
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
 	<haxelib name="discord_rpc" if="DISCORD_ALLOWED"/>
 	<haxelib name="hxvlc" if="VIDEOS_ALLOWED"/>
-	
+
 	<section if="mobile">
 		<haxelib name="extension-androidtools" />
-		<haxelib name="SStas-An" />
 	</section>
 
 	<haxeflag name="--macro" value="addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxSprite())', 'flixel.FlxSprite')" />
 	<haxeflag name="--macro" value="addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxBasic())', 'flixel.FlxBasic')" />
-	
+
 	<haxeflag name="--macro" value="include('funkin')" />
 	<haxeflag name="--macro" value="include('flixel.addons',true,['flixel.addons.nape.*','flixel.addons.editors.*'])" />
 	<haxeflag name="-dce no" />
@@ -76,7 +75,7 @@
 		<haxedef name="HXCPP_TRACY_MEMORY"/>
 		<haxedef name="HXCPP_TRACY_ON_DEMAND"/>
 		<haxedef name="absolute-paths"/>
-		</section>
+	</section>
 
 	<haxedef name="CRASH_HANDLER" if="desktop release"/>
 
@@ -99,13 +98,13 @@
 	<haxedef name="no-deprecation-warnings"/>
 
 	<set name="ANDROID_SET_EXTERNAL_STORAGE_PERMISSION" value="1" />
-	
-	<config:android 
-		install-location="auto" 
-		extension=".apk" 
-		permissions="android.permission.READ_EXTERNAL_STORAGE, android.permission.WRITE_EXTERNAL_STORAGE, android.permission.MANAGE_EXTERNAL_STORAGE" 
+
+	<config:android
+		install-location="auto"
+		extension=".apk"
+		permissions="android.permission.READ_EXTERNAL_STORAGE, android.permission.WRITE_EXTERNAL_STORAGE, android.permission.MANAGE_EXTERNAL_STORAGE"
 		target-sdk-version="33" />
-	
+
 	<haxedef name="EXTERNAL_FILES" if="android" />
 
 	<window if="android" render="opengl" />
