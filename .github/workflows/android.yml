@@ -22,42 +22,33 @@ jobs:
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.6 # Versão estável e disponível no servidor
+          haxe-version: 4.3.6
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r21e
 
       - name: Install Libraries
         run: |
           haxelib setup ~/haxelib
-          haxelib install flixel 5.5.0
-          haxelib install flixel-addons
-          haxelib install flixel-ui
-          haxelib install openfl
-          haxelib install lime
-          haxelib install flxanimate
-          haxelib install hscript-iris
-          haxelib install linc_luajit
-          haxelib install extension-androidtools
-          haxelib install SStas-An
-          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
-          haxelib run lime setup flixel
-          haxelib run lime setup
+          haxelib install hxpkg --global
+          haxelib run hxpkg setup --global
+          hxpkg install
 
-      - name: Setup Android NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r21e
-
-      - name: Configure Lime
+      - name: Configure Lime Android
         run: |
-          haxelib run lime setup android --sdk=$ANDROID_SDK_ROOT --ndk=$ANDROID_NDK_ROOT --jdk=$JAVA_HOME
+          haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
+          haxelib run lime config ANDROID_NDK ${{ steps.setup-ndk.outputs.ndk-path }}
+          haxelib run lime config JAVA_HOME $JAVA_HOME
 
       - name: Build APK
-        run: |
-          # Compilando em Debug para garantir que o build termine rápido e gere o log de erro se falhar
-          haxelib run lime build android -debug
+        run: haxelib run lime build android -final
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NightmareVision-Android
-          path: ./**/*.apk
+          path: export/release/android/bin/app/build/outputs/apk/**/*.apk
           if-no-files-found: error
