@@ -1,117 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<app title="FNF: NightmareVision" file="NightmareVision" packageName="com.shadowmario.nvmengine" package="com.shadowmario.nvmengine" main="Main" version="0.2.7" company="ShadowMario" />
+    <app title="FNF: NightmareVision" file="NightmareVision" packageName="com.shadowmario.nvmengine" package="com.shadowmario.nvmengine" main="Main" version="0.2.7" company="ShadowMario" />
 
-	<set name="APP_ID" value="0x0100f6c013bbc000" />
+    <set name="APP_ID" value="0x0100f6c013bbc000" />
 
-	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/> <app preloader="flixel.system.FlxPreloader" />
+    <haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/> 
+    <app preloader="flixel.system.FlxPreloader" />
 
-	<set name="SWF_VERSION" value="11.8" />
+    <set name="SWF_VERSION" value="11.8" />
 
-	<window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" />
+    <window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" />
+    <window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />
+    <window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false"/>
 
-	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" vsync="false"/>
+    <classpath name="source" />
 
-	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false"/>
+    <setenv name="HAXEPATH" value="./"/>
 
-	<window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
+    <define name="MODS_ALLOWED" if="desktop || mobile" />
+    <define name="LUA_ALLOWED" if="cpp" />
+    <define name="VIDEOS_ALLOWED" if="cpp" />
+    <define name="DISCORD_ALLOWED" if="desktop"/>
 
-	<classpath name="source" />
+    <assets path='assets/embeds' rename='assets' embed="true" />
+    <assets path="assets/game" rename="assets"/>
+    <assets path='content' embed='false' if="MODS_ALLOWED"/>
 
-	<setenv name="HAXEPATH" value="./"/>
+    <haxelib name="openfl"/>
+    <haxelib name="flixel"/>
+    <haxelib name="flixel-addons"/>
+    <haxelib name="flixel-ui"/>
+    <haxelib name="flxanimate"/>
+    <haxelib name="hscript-iris"/>
 
-	<set name="BUILD_DIR" value="export/debug" if="debug" />
-	<set name="BUILD_DIR" value="export/release" unless="debug" />
-	<set name="BUILD_DIR" value="export/32bit" if="32bits" />
-	<set name="BUILD_DIR" value="${BUILD_DIR}-tracy" if="FEATURE_DEBUG_TRACY"/>
+    <haxelib name="linc_luajit" if="LUA_ALLOWED"/>
+    <haxelib name="discord_rpc" if="DISCORD_ALLOWED"/>
+    <haxelib name="hxvlc" if="VIDEOS_ALLOWED"/>
+    
+    <haxelib name="extension-androidtools" if="android" />
 
-	<define name="MODS_ALLOWED" if="desktop || mobile" />
-	<define name="LUA_ALLOWED" if="cpp" />
-	<define name="VIDEOS_ALLOWED" if="cpp" />
-	<define name="DISCORD_ALLOWED" if="desktop"/>
+    <haxeflag name="--macro" value="addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxSprite())', 'flixel.FlxSprite')" />
+    <haxeflag name="--macro" value="addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxBasic())', 'flixel.FlxBasic')" />
+    <haxeflag name="--macro" value="include('funkin')" />
+    <haxeflag name="-dce no" />
 
-	<assets path='assets/embeds' rename='assets' embed="true" />
-	<assets path="assets/game" rename="assets"/>
+    <section if="android">
+        <config:android
+            install-location="auto"
+            extension=".apk"
+            permissions="android.permission.READ_EXTERNAL_STORAGE, android.permission.WRITE_EXTERNAL_STORAGE, android.permission.MANAGE_EXTERNAL_STORAGE"
+            target-sdk-version="33" />
+        
+        <haxedef name="ANDROID_SET_EXTERNAL_STORAGE_PERMISSION" value="1" />
+        <haxedef name="EXTERNAL_FILES" />
+        <window render="opengl" />
+    </section>
 
-	<assets path='content' embed='false' if="MODS_ALLOWED"/>
+    <haxedef name="HXCPP_CHECK_POINTER" if="release" />
+    <haxedef name="HXCPP_STACK_LINE" if="release" />
+    <haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
+    <haxedef name="no-deprecation-warnings"/>
 
-	<section if="desktop">
-		<assets path="projFiles/alsoft.ini" rename="alsoft.ini" type="text" if="windows"/>
-		<assets path="projFiles/alsoft.ini" rename="alsoft.conf" type="text" unless="windows"/>
-	</section>
-
-	<haxelib name="openfl"/>
-
-	<haxelib name="flixel"/>
-	<haxelib name="flixel-addons"/>
-	<haxelib name="flixel-ui"/>
-
-	<haxelib name="flxanimate"/>
-
-	<haxelib name="hscript-iris"/>
-
-	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
-	<haxelib name="discord_rpc" if="DISCORD_ALLOWED"/>
-	<haxelib name="hxvlc" if="VIDEOS_ALLOWED"/>
-
-	<section if="mobile">
-		<haxelib name="extension-androidtools" />
-	</section>
-
-	<haxeflag name="--macro" value="addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxSprite())', 'flixel.FlxSprite')" />
-	<haxeflag name="--macro" value="addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxBasic())', 'flixel.FlxBasic')" />
-
-	<haxeflag name="--macro" value="include('funkin')" />
-	<haxeflag name="--macro" value="include('flixel.addons',true,['flixel.addons.nape.*','flixel.addons.editors.*'])" />
-	<haxeflag name="-dce no" />
-
-	<haxedef name="haxeui_dont_impose_base_class"/>
-
-	<define name="hscriptPos"/>
-
-	<section if="FEATURE_DEBUG_TRACY">
-		<haxedef name="HXCPP_TELEMETRY"/>
-		<haxedef name="HXCPP_TRACY"/>
-		<haxedef name="HXCPP_TRACY_MEMORY"/>
-		<haxedef name="HXCPP_TRACY_ON_DEMAND"/>
-		<haxedef name="absolute-paths"/>
-	</section>
-
-	<haxedef name="CRASH_HANDLER" if="desktop release"/>
-
-	<haxedef name="HXCPP_CHECK_POINTER" if="CRASH_HANDLER" />
-	<haxedef name="HXCPP_STACK_LINE" if="CRASH_HANDLER" />
-	<haxedef name="HXCPP_STACK_TRACE" if="CRASH_HANDLER" />
-
-	<haxedef name="NO_PRECOMPILED_HEADERS" if="LUA_ALLOWED"/>
-
-	<haxedef name="FLX_NO_HEALTH" />
-
-	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
-
-	<haxedef name="FLX_NO_DEBUG" unless="debug" />
-
-	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
-
-	<haxedef name="message.reporting" value="pretty" />
-
-	<haxedef name="no-deprecation-warnings"/>
-
-	<set name="ANDROID_SET_EXTERNAL_STORAGE_PERMISSION" value="1" />
-
-	<config:android
-		install-location="auto"
-		extension=".apk"
-		permissions="android.permission.READ_EXTERNAL_STORAGE, android.permission.WRITE_EXTERNAL_STORAGE, android.permission.MANAGE_EXTERNAL_STORAGE"
-		target-sdk-version="33" />
-
-	<haxedef name="EXTERNAL_FILES" if="android" />
-
-	<window if="android" render="opengl" />
-
-	<icon path="projFiles/icon/icon16.png" size='16'/>
-	<icon path="projFiles/icon/icon32.png" size='32'/>
-	<icon path="projFiles/icon/icon64.png" size='64'/>
-	<icon path="projFiles/icon/iconOG.png" />
+    <icon path="projFiles/icon/icon16.png" size='16'/>
+    <icon path="projFiles/icon/icon32.png" size='32'/>
+    <icon path="projFiles/icon/icon64.png" size='64'/>
+    <icon path="projFiles/icon/iconOG.png" />
 
 </project>
