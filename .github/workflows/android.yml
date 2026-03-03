@@ -12,12 +12,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17' # Java 17 é ideal para o Target SDK 33
+          java-version: '17'
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@v1
@@ -33,19 +35,25 @@ jobs:
       - name: Install Libraries
         run: |
           haxelib setup ~/haxelib
-          haxelib install lime
-          haxelib install openfl
-          haxelib install flixel
+          # Bibliotecas Base
+          haxelib install lime --quiet
+          haxelib install openfl --quiet
+          haxelib install flixel --quiet
           haxelib run lime setup
-          # Instala bibliotecas necessárias para o motor
-          haxelib install flixel-addons
-          haxelib install flixel-ui
-          haxelib install flxanimate
-          haxelib install hscript-iris
+          
+          # Bibliotecas do Motor (Psych/NVM)
+          haxelib install flixel-addons --quiet
+          haxelib install flixel-ui --quiet
+          haxelib install flxanimate --quiet
+          haxelib install hscript-iris --quiet
+          
+          # Bibliotecas Nativas (Git) - Crucial para não dar "Type not found"
+          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit
+          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
           haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
           haxelib git extension-androidtools https://github.com/MAJigsaw77/extension-androidtools
 
-      - name: Configure Lime
+      - name: Configure Lime Android
         run: |
           haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
           haxelib run lime config ANDROID_NDK ${{ steps.setup-ndk.outputs.ndk-path }}
@@ -54,8 +62,6 @@ jobs:
 
       - name: Build APK
         run: |
-          # O uso do -debug costuma ser mais bem-sucedido em ports iniciais
-          # Adicionado -clean para garantir que o Gradle não use lixo de cache
           haxelib run lime build android -debug -clean -DHXCPP_COMPILE_THREADS=4
 
       - name: Upload APK
@@ -63,3 +69,4 @@ jobs:
         with:
           name: NightmareVision-Android
           path: export/debug/android/bin/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
