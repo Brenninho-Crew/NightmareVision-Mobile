@@ -15,11 +15,6 @@ import sys.FileSystem;
 import sys.io.File;
 #end
 
-#if android
-import android.content.Context;
-import android.os.Environment;
-#end
-
 using StringTools;
 
 class Paths
@@ -34,13 +29,14 @@ class Paths
         public static inline final CORE_DIRECTORY = #if ASSET_REDIRECT trail + 'assets/game' #else 'assets' #end;
 
         /**
-         * Mod directory - No Android, redirecionamos para o armazenamento externo
+         * Mod directory - No Android, redirecionamos para o armazenamento externo usando Lime System
          */
         #if android
         public static var MODS_DIRECTORY(get, null):String;
         static function get_MODS_DIRECTORY():String {
-            // Isso cria a pasta em /storage/emulated/0/Android/data/seu.pacote/files/content
-            return android.os.Environment.getExternalStorageDirectory() + '/' + openfl.Lib.application.meta.get('file') + '/content';
+            // lime.system.System.documentsDirectory retorna o caminho seguro para arquivos no Android
+            // Geralmente: /storage/emulated/0/Android/data/com.shadowmario.nvmengine/files
+            return lime.system.System.documentsDirectory + '/content';
         }
         #else
         public static inline final MODS_DIRECTORY = #if ASSET_REDIRECT trail + 'content' #else 'content' #end;
