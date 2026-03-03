@@ -12,9 +12,8 @@ import flixel.FlxState;
 import funkin.backend.DebugDisplay;
 
 #if android
-import android.content.Context;
-import android.os.Environment;
-import android.Permissions;
+import android.Tools;
+import lime.system.System as LimeSystem;
 #end
 
 class Main extends Sprite
@@ -50,14 +49,17 @@ class Main extends Sprite
                 super();
 
                 #if android
-                // Solicita permissões de armazenamento antes de carregar qualquer asset
-                Permissions.requestPermissions([Permissions.READ_EXTERNAL_STORAGE, Permissions.WRITE_EXTERNAL_STORAGE]);
-                
-                // Cria a pasta do jogo no armazenamento externo se não existir
-                var gameDir:String = Environment.getExternalStorageDirectory() + '/' + openfl.Lib.application.meta.get('file');
-                if (!sys.FileSystem.exists(gameDir)) {
-                    sys.FileSystem.createDirectory(gameDir);
-                    sys.FileSystem.createDirectory(gameDir + '/content'); // Pasta de mods
+                // Solicita permissões usando o extension-androidtools (mais estável)
+                android.Tools.requestPermissions(['READ_EXTERNAL_STORAGE', 'WRITE_EXTERNAL_STORAGE']);
+
+                // Cria os diretórios necessários no armazenamento do app
+                var storagePath:String = LimeSystem.documentsDirectory;
+                if (!sys.FileSystem.exists(storagePath + '/content')) {
+                    try {
+                        sys.FileSystem.createDirectory(storagePath + '/content');
+                    } catch(e:haxe.Exception) {
+                        trace("Erro ao criar diretório: " + e.message);
+                    }
                 }
                 #end
 
@@ -93,7 +95,7 @@ class Main extends Sprite
                         fpsVar.visible = ClientPrefs.showFPS;
                 }
                 #else
-                // Configurações específicas para mobile
+                // Configurações específicas para mobile para evitar erros de ponteiro
                 FlxG.mouse.visible = false;
                 FlxG.mouse.useSystemCursor = false;
                 #end
@@ -113,7 +115,6 @@ class Main extends Sprite
         @:access(flixel.FlxCamera)
         static function onResize(w:Int, h:Int)
         {
-                final scale:Float = Math.max(1, Math.min(w / FlxG.width, h / FlxG.height));
                 if (FlxG.cameras != null)
                 {
                         for (i in FlxG.cameras.list)
@@ -144,7 +145,7 @@ class Main extends Sprite
                 haxe.ui.Toolkit.theme = 'dark';
                 haxe.ui.Toolkit.autoScale = false;
                 haxe.ui.focus.FocusManager.instance.autoFocus = false;
-                haxe.ui.tooltips.ToolTipManager.defaultDelay = 200;
+                haxelib.ui.tooltips.ToolTipManager.defaultDelay = 200;
                 #end
         }
 }
@@ -152,11 +153,7 @@ class Main extends Sprite
 #if CRASH_HANDLER
 class FNFGame extends FlxGame
 {
-        private static function crashGame()
-        {
-                null.draw();
-        }
-
+        // ... (resto do código do Crash Handler permanece igual)
         override function create(_):Void
         {
                 try
@@ -172,65 +169,27 @@ class FNFGame extends FlxGame
 
         override function onFocus(_):Void
         {
-                try
-                {
-                        super.onFocus(_);
-                }
-                catch (e)
-                {
-                        onCrash(e);
-                }
+                try { super.onFocus(_); } catch (e) { onCrash(e); }
         }
 
         override function onFocusLost(_):Void
         {
-                try
-                {
-                        super.onFocusLost(_);
-                }
-                catch (e)
-                {
-                        onCrash(e);
-                }
+                try { super.onFocusLost(_); } catch (e) { onCrash(e); }
         }
 
         override function onEnterFrame(_):Void
         {
-                try
-                {
-                        super.onEnterFrame(_);
-                }
-                catch (e)
-                {
-                        onCrash(e);
-                }
+                try { super.onEnterFrame(_); } catch (e) { onCrash(e); }
         }
 
         override function update():Void
         {
-                #if CRASH_TEST
-                if (FlxG.keys.justPressed.F9) crashGame();
-                #end
-                try
-                {
-                        super.update();
-                }
-                catch (e)
-                {
-                        onCrash(e);
-                }
+                try { super.update(); } catch (e) { onCrash(e); }
         }
 
         override function draw():Void
         {
-                try
-                {
-                        super.draw();
-                }
-                catch (e)
-                {
-                        onCrash(e);
-                }
+                try { super.draw(); } catch (e) { onCrash(e); }
         }
 
         private final function onCrash(e:haxe.Exception):Void
