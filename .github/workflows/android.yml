@@ -39,6 +39,7 @@ jobs:
           haxelib install hxpkg --global
           haxelib run hxpkg setup --global
           hxpkg install
+          haxelib install SStas-An
           haxelib git extension-androidtools https://github.com/MAJigsaw77/extension-androidtools
 
       - name: Configure Lime Android
